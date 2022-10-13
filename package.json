@@ -19,7 +19,7 @@
     "coffeescript": "^2.7.0",
     "hamljs": "^0.6.2",
     "jade": "^1.11.0",
-    "jquery": "^3.6.1",
+    "jquery": "^1.12.4",
     "json-bigint": "^1.0.0",
     "le-markdown-editor": "^1.1.4",
     "mavon-editor": "^2.10.4",

@@ -1,19 +1,14 @@
 <template>
   <div id="app">
-    <Head></Head>
     <h1 id="title">{{ title }}</h1>
     <mavon-editor class="lang-vue" v-model="content" :ishljs="true" :codeStyle="codeStyle" @save="save" @navigationToggle="addUrl"/>
   </div>
 </template>
 
 <script>
-import Head from '@/components/head/backgroud/bootstrap/Head'
 
 export default {
   name: 'Edit',
-  components: {
-    Head
-  },
   data: function () {
     return {
       title: '',
@@ -24,8 +19,8 @@ export default {
   methods: {
     save: function (val) {
       // 获取预览文本
-      console.log(this.content) // 这里是原markdown文本
-      console.log(val) // 这个是解析出的html
+      // console.log(this.content) // 这里是原markdown文本
+      // console.log(val) // 这个是解析出的html
       this.axios
         .post('/article/addOrUpdate', {
           'id': '1579006856955691008',
@@ -87,7 +82,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
 #app {
-  width: 90%;
+  width: 95%;
   height: 580px;
   margin: auto;
 }

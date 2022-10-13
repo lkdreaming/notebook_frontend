@@ -38,6 +38,7 @@ export default {
             localStorage.setItem('token', response.data.data.Authorization)
             localStorage.setItem('tokenExpireTimeStamp', response.data.data.tokenExpireTimeStamp)
             localStorage.setItem('RefreshedToken', response.data.data.RefreshedToken)
+            localStorage.setItem('tokenData', JSON.stringify(response.data.data.tokenData))
             this.$router.push('/edit')
           } else {
             alert(response.data.errorMessage)
@@ -61,7 +62,7 @@ body {
 }
 
 #login_box {
-  width: 20%;
+  width: 40%;
   height: 400px;
   background-color: #00000060;
   margin: auto;

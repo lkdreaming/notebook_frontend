@@ -6,16 +6,13 @@ import router from './router'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import axios from 'axios'
-// 引入jQuery、bootstrap
+// // 引入jQuery、bootstrap
 import $ from 'jquery'
 import 'bootstrap'
-
-// 引入bootstrap样式
+//
+// // 引入bootstrap样式
 import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap/dist/js/bootstrap.min.js'
-
-// 全局注册 $
-Vue.prototype.$ = $
+// import 'bootstrap/dist/js/bootstrap.min.js'
 
 Vue.use(mavonEditor)
 
@@ -88,6 +85,11 @@ axios.interceptors.request.use(
 
 // 挂载到vue原型链上
 Vue.prototype.axios = axios
+
+Vue.prototype.tokenData = localStorage.getItem('tokenData')
+
+// 全局注册 $
+Vue.prototype.$ = $
 
 // axios.interceptors.response.use(
 //   response => {
