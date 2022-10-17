@@ -1,20 +1,18 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import App from './App'
 import router from './router'
 import mavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
-// // 引入jQuery、bootstrap
-import $ from 'jquery'
-import 'bootstrap'
-//
-// // 引入bootstrap样式
-import 'bootstrap/dist/css/bootstrap.min.css'
+
+import App from './App'
 // import 'bootstrap/dist/js/bootstrap.min.js'
 
 Vue.use(mavonEditor)
+Vue.use(ElementUI)
 
 // 不同环境用不同的域名
 // process.env.BASE_API是config/*.env.js中的BASE_API
@@ -29,14 +27,6 @@ if (jwtToken) {
 
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  components: {App},
-  template: '<App/>'
-})
-
 const isTokenExpired = () => { // 验证当前token是否过期
 // eslint-disable-next-line no-undef,no-unused-expressions
   if (jwtToken) {
@@ -50,10 +40,10 @@ const isTokenExpired = () => { // 验证当前token是否过期
 
 // 是否正在刷新的标记 -- 防止重复发出刷新token接口--节流阀
 let isRefreshing = false
-// alert(1111)
+
 axios.interceptors.request.use(
   config => {
-    // console.log(config)
+    console.log('jwtToken: ' + jwtToken)
     if (isTokenExpired()) { // 如果过期了, 则需要用RefreshedToken换新的token
       if (!isRefreshing) {
         isRefreshing = true
@@ -88,8 +78,14 @@ Vue.prototype.axios = axios
 
 Vue.prototype.tokenData = localStorage.getItem('tokenData')
 
-// 全局注册 $
-Vue.prototype.$ = $
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  router,
+  render: h => h(App),
+  components: {App},
+  template: '<App/>'
+})
 
 // axios.interceptors.response.use(
 //   response => {

@@ -1,7 +1,10 @@
 <template>
   <div id="app">
-    <h1 id="title">{{ title }}</h1>
-    <mavon-editor class="lang-vue" v-model="content" :ishljs="true" :codeStyle="codeStyle" @save="save" @navigationToggle="addUrl"/>
+    <div>
+      <el-input placeholder="请输入标题" v-model="title"></el-input>
+    </div>
+    <mavon-editor class="lang-vue" v-model="content" :ishljs="true" :codeStyle="codeStyle" @save="save"
+                  @navigationToggle="addUrl"/>
   </div>
 </template>
 
@@ -11,9 +14,10 @@ export default {
   name: 'Edit',
   data: function () {
     return {
-      title: '',
+      title: '未命名标题',
       content: '',
-      codeStyle: 'agate'
+      codeStyle: 'agate',
+      id: ''
     }
   },
   methods: {
@@ -23,19 +27,21 @@ export default {
       // console.log(val) // 这个是解析出的html
       this.axios
         .post('/article/addOrUpdate', {
-          'id': '1579006856955691008',
+          'id': this.id,
           'parentId': 0,
-          'title': '111111',
+          'title': this.title,
           'content': this.content,
           'type': 0
         })
         .then(response => {
           this.info = response
           let success = response.data.success
+          this.id = response.data.data.id
+          this.title = response.data.data.title
           if (success) {
-            alert("'保存成功'")
+            alert('\'保存成功\'')
           } else {
-            alert("'保存失败, 原因为; '" + response.data.errorMessage)
+            alert('\'保存失败, 原因为; \'' + response.data.errorMessage)
           }
         })
         .catch(function (error) { // 请求失败处理
@@ -59,12 +65,12 @@ export default {
       })
     }
   },
-  mounted () {
+  mounted() {
     this.$nextTick(() => {
       this.axios
         .get('/article/detail', {
           params: {
-            'id': '1579006856955691008'
+            'id': '1581840943009497088'
           }
         })
         .then(response => {
@@ -80,19 +86,20 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss">
+<style lang="scss" scoped>
 #app {
   width: 95%;
   height: 580px;
   margin: auto;
 }
 
-#app .lang-vue{
+#app .lang-vue {
   font-size: 20px;
 }
 
 #title {
   font-size: 60px;
+  height: 10%;
 }
 
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isShow" id="app">
     <div class="row">
       <nav class="navbar navbar-default">
         <div class="container-fluid">
@@ -26,7 +26,7 @@
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                   <li><a href="#">个人信息</a></li>
-                  <li><a href="#">登出</a></li>
+                  <li><a href="#" @click="logout">登出</a></li>
                 </ul>
               </div>
             </div>
@@ -39,24 +39,52 @@
 </template>
 
 <script>
-import Button from '../../button/Button'
+// // 引入jQuery、bootstrap
+// import $ from 'jquery'
+import 'bootstrap'
+//
+// // 引入bootstrap样式
+import 'bootstrap/dist/css/bootstrap.min.css'
 
-// console.log('11111' + this.tokenData)
-
-// this.$(document).ready(function() {
-//   console.log('11111' + this.tokenData)
-// })
-
-let tokeData = JSON.parse(localStorage.getItem('tokenData'))
 export default {
   name: 'Head',
-  components: {Button},
   data: function () {
     return {
-      username: tokeData.name,
-      user_head_img_url: tokeData.userHeadImageUrl,
+      isShow: false,
+      username: '',
+      user_head_img_url: '',
       hidden: false
     }
+  },
+  methods: {
+    logout: function () {
+      console.log('logout')
+      this.axios
+        .post('/user/doLogout')
+        .then(response => {
+          localStorage.removeItem('token')
+          localStorage.removeItem('tokenExpireTimeStamp')
+          localStorage.removeItem('RefreshedToken')
+          localStorage.removeItem('tokenData')
+          this.tokenData = null
+          this.username = null
+          this.user_head_img_url = null
+          this.$router.push('/login')
+          this.$router.go(0)
+        })
+    }
+  },
+  mounted() {
+    this.$nextTick(function () {
+      let tokenData = JSON.parse(localStorage.getItem('tokenData'))
+      if (tokenData) {
+        this.username = tokenData.name
+        this.user_head_img_url = tokenData.userHeadImageUrl
+      }
+      this.isShow = localStorage.getItem('tokenData') != null
+      console.log('tokenData: ' + this.tokenData)
+      console.log('show: ' + this.isShow)
+    })
   }
 }
 </script>
@@ -67,17 +95,5 @@ export default {
   background: #354144;
   color: white;
 }
-.dropdown-list {
-  position: absolute;
-  top: 80px;
-  left: 0;
-  width: 100%;
-  height: 20px;
-  overflow: hidden;
-  transition: 0.3s;
-}
 
-.dropdown-item {
-  border-style: dashed;
-}
 </style>

@@ -39,7 +39,8 @@ export default {
             localStorage.setItem('tokenExpireTimeStamp', response.data.data.tokenExpireTimeStamp)
             localStorage.setItem('RefreshedToken', response.data.data.RefreshedToken)
             localStorage.setItem('tokenData', JSON.stringify(response.data.data.tokenData))
-            this.$router.push('/edit')
+            this.$router.push('/detail')
+            this.$router.go(0)
           } else {
             alert(response.data.errorMessage)
           }
@@ -55,7 +56,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 body {
   background: url('https://cdn.pixabay.com/photo/2018/08/14/13/23/ocean-3605547_1280.jpg') no-repeat;
   background-size: 100% 130%;

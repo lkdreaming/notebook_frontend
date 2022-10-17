@@ -5,13 +5,9 @@
 </template>
 
 <script>
-import Button from '../../button/Button'
 
 export default {
-  name: 'Head.vue',
-  components: {
-    Button
-  }
+  name: 'Head.vue'
 }
 </script>
 

@@ -4,6 +4,7 @@ import HelloWorld from '@/components/HelloWorld'
 import Edit from '@/components/mavonEditor/article/edit/Edit'
 import Detail from '@/components/mavonEditor/article/detail/Detail'
 import Login from '@/components/mavonEditor/user/login/Login'
+// import List from '@/components/mavonEditor/article/list/List'
 
 Vue.use(Router)
 
@@ -29,5 +30,10 @@ export default new Router({
       name: 'Login',
       component: Login
     }
+    // {
+    //   path: '/list',
+    //   name: 'List',
+    //   component: List
+    // }
   ]
 })

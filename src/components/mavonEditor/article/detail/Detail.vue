@@ -1,15 +1,45 @@
 <template>
   <div id="app">
-    <h1 id="title">{{ title }}</h1>
-    <mavon-editor class="lang-vue" :toolbars="toolbars"
-                  v-model="content"
-                  :subfield="false"
-                  :defaultOpen="'preview'"
-                  :editable="false"
-                  :codeStyle="'agate'"
-                  @navigationToggle="addUrl"
-                  :fontSize="'18px'">
-    </mavon-editor>
+    <!--    <el-row class="tac" id="article" style="height: 100%">-->
+    <el-col :span="4">
+      <ul id="menu">
+        <li id="menu-item" v-for="article in articleList" :key="article">
+          <i @click="detail(article.id)">{{ article.title }}</i>
+          <ul>
+            <li id="menu-item" v-for="childArticle in article.childrenArticleVoList" :key="childArticle">
+              <i @click="detail(childArticle.id)">{{ childArticle.title }}</i>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </el-col>
+    <el-col :span="20" style="height: 100%">
+      <h1 id="title">{{ title }}</h1>
+      <input v-model="content"/>
+      <mavon-editor class="lang-vue" :toolbars="toolbars"
+                    v-model="content"
+                    :subfield="false"
+                    :defaultOpen="'preview'"
+                    :editable="false"
+                    :codeStyle="'agate'"
+                    @navigationToggle="addUrl"
+                    :fontSize="'18px'">
+        <template v-slot:right-toolbar-after>
+          <button
+            type="button"
+            title="编辑"
+            class="op-icon fa markdown-upload iconfont iconupload"
+            aria-hidden="true"
+            @click="edit(articleId)"
+          >
+            <!-- 这里用的是element-ui给出的图标 -->
+            <i class="el-icon-edit-outline"/>
+          </button>
+        </template>
+
+      </mavon-editor>
+    </el-col>
+    <!--    </el-row>-->
   </div>
 </template>
 
@@ -20,6 +50,8 @@ export default {
     return {
       title: '',
       content: '',
+      articleId: '',
+      articleList: '',
       toolbars: {
         bold: false, // 粗体
         italic: false, // 斜体
@@ -73,19 +105,42 @@ export default {
           // _a.style.color = "red";
         }
       })
+    },
+    detail(articleId) {
+      this.axios
+        .get('/article/detail', {
+          params: {
+            'id': articleId
+          }
+        })
+        .then(response => {
+          this.content = response.data.data.content
+          this.articleId = response.data.data.id
+          console.log('this.content: ' + this.content)
+          this.title = response.data.data.title
+        })
+        .catch(function (error) { // 请求失败处理
+          console.log(error)
+        })
+    },
+    edit(articleId) {
+      console.log('edit: ' + articleId)
     }
   },
   mounted() {
+    this.$nextTick(() => {
+      this.axios
+        .post('/article/list', {'parentId': this.parentId})
+        .then(reseponse => {
+          this.articleList = reseponse.data.data
+        })
+    })
     this.axios
       .get('/article/detail', {
         params: {
-          'id': '1579006856955691008'
+          'id': this.articleId
         }
       })
-      // .then(function (response) {
-      //   this.content = response.data.data.content
-      //   // this.title = response.data.data.title
-      // })
       .then(response => {
         this.content = response.data.data.content
         this.title = response.data.data.title
@@ -98,10 +153,10 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style lang="scss">
+<style lang="scss" scoped>
 #app {
   width: 90%;
-  height: 500px;
+  height: 100%;
   margin: 50px auto;
 }
 
@@ -111,6 +166,14 @@ export default {
 
 #title {
   font-size: 60px;
+}
+
+#menu {
+  text-align: left;
+}
+
+#menu-item {
+  margin: 5px;
 }
 
 </style>

@@ -17,6 +17,7 @@
     "axios": "^1.1.2",
     "bootstrap": "^3.4.1",
     "coffeescript": "^2.7.0",
+    "element-ui": "^2.15.10",
     "hamljs": "^0.6.2",
     "jade": "^1.11.0",
     "jquery": "^1.12.4",
