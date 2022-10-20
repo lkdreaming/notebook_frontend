@@ -15,7 +15,6 @@
     </el-col>
     <el-col :span="20" style="height: 100%">
       <h1 id="title">{{ title }}</h1>
-      <input v-model="content"/>
       <mavon-editor class="lang-vue" :toolbars="toolbars"
                     v-model="content"
                     :subfield="false"
@@ -125,6 +124,11 @@ export default {
     },
     edit(articleId) {
       console.log('edit: ' + articleId)
+      localStorage.setItem('articleId', articleId)
+      this.$router.push({
+        name: 'Edit',
+        params: {id: articleId}
+      })
     }
   },
   mounted() {

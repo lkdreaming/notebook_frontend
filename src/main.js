@@ -12,6 +12,7 @@ import App from './App'
 // import 'bootstrap/dist/js/bootstrap.min.js'
 
 Vue.use(mavonEditor)
+
 Vue.use(ElementUI)
 
 // 不同环境用不同的域名
@@ -77,6 +78,8 @@ axios.interceptors.request.use(
 Vue.prototype.axios = axios
 
 Vue.prototype.tokenData = localStorage.getItem('tokenData')
+
+Vue.prototype.figureBedUrl = process.env.FIGURE_BED_URL
 
 /* eslint-disable no-new */
 new Vue({

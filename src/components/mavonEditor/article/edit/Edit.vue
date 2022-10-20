@@ -4,12 +4,11 @@
       <el-input placeholder="请输入标题" v-model="title"></el-input>
     </div>
     <mavon-editor class="lang-vue" v-model="content" :ishljs="true" :codeStyle="codeStyle" @save="save"
-                  @navigationToggle="addUrl"/>
+                  @navigationToggle="addUrl" @imgAdd="imgAdd" ref="md"/>
   </div>
 </template>
 
 <script>
-
 export default {
   name: 'Edit',
   data: function () {
@@ -63,25 +62,60 @@ export default {
           // _a.style.color = "red";
         }
       })
+    },
+    async imgAdd(pos, $file) {
+      var formdata = new FormData()
+      formdata.append('image', $file)
+      await this.axios.post('/file/upload',
+        formdata).then(response => {
+        this.$refs.md.$img2Url(pos, process.env.FIGURE_BED_URL + '/' + response.data.data.uri)
+      }).catch(function (error) { // 请求失败处理
+        console.log(error)
+      })
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.axios
-        .get('/article/detail', {
-          params: {
-            'id': '1581840943009497088'
-          }
-        })
-        .then(response => {
-          this.content = response.data.data.content
-          this.title = response.data.data.title
-        })
-        .catch(function (error) { // 请求失败处理
-          console.log(error)
-        })
-    })
+    this.axios
+      .get('/article/detail', {
+        params: {
+          'id': this.$route.params.id === null ? localStorage.getItem('articleId') : this.$route.params.id
+        }
+      })
+      .then(response => {
+        this.content = response.data.data.content
+        this.title = response.data.data.title
+        this.id = this.$route.params.id === null ? localStorage.getItem('articleId') : this.$route.params.id
+      })
+      .catch(function (error) { // 请求失败处理
+        console.log(error)
+      })
+    // this.$nextTick(() => {
+    //
+    // })
   }
+  // computed() {
+  //
+  // }
+  // created() {
+  //   // alert('created')
+  //   this.$nextTick(() => {
+  //     this.axios
+  //       .get('/article/detail', {
+  //         params: {
+  //           'id': this.$route.params.id === null ? localStorage.getItem('articleId') : this.$route.params.id
+  //         }
+  //       })
+  //       .then(response => {
+  //         this.content = response.data.data.content
+  //         this.title = response.data.data.title
+  //         this.id = this.$route.params.id === null ? localStorage.getItem('articleId') : this.$route.params.id
+  //         alert(this.id)
+  //       })
+  //       .catch(function (error) { // 请求失败处理
+  //         console.log(error)
+  //       })
+  //   })
+  // }
 }
 </script>
 
