@@ -7,13 +7,20 @@ import 'mavon-editor/dist/css/index.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
+import Vuex from 'vuex'
 
 import App from './App'
+
+import VueTreeList from 'vue-tree-list'
 // import 'bootstrap/dist/js/bootstrap.min.js'
 
 Vue.use(mavonEditor)
 
 Vue.use(ElementUI)
+
+Vue.use(Vuex)
+
+Vue.use(VueTreeList)
 
 // 不同环境用不同的域名
 // process.env.BASE_API是config/*.env.js中的BASE_API

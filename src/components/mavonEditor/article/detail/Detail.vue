@@ -3,11 +3,12 @@
     <!--    <el-row class="tac" id="article" style="height: 100%">-->
     <el-col :span="4">
       <ul id="menu">
-        <li id="menu-item" v-for="article in articleList" :key="article">
-          <i @click="detail(article.id)">{{ article.title }}</i>
+        <el-button style="margin-bottom: 10px">后退</el-button>
+        <li id="menu-item" v-for="(article, index) in articleList" :key="article">
+          <span @click="detail(article.id, index)" :class="{'active': index === number}">{{ article.title }}</span>
           <ul>
             <li id="menu-item" v-for="childArticle in article.childrenArticleVoList" :key="childArticle">
-              <i @click="detail(childArticle.id)">{{ childArticle.title }}</i>
+              <span @click="list(childArticle.parentId, childArticle.id)">{{ childArticle.title }}</span>
             </li>
           </ul>
         </li>
@@ -29,7 +30,7 @@
             title="编辑"
             class="op-icon fa markdown-upload iconfont iconupload"
             aria-hidden="true"
-            @click="edit(articleId)"
+            @click="edit"
           >
             <!-- 这里用的是element-ui给出的图标 -->
             <i class="el-icon-edit-outline"/>
@@ -51,6 +52,11 @@ export default {
       content: '',
       articleId: '',
       articleList: '',
+      // parentId: this.$route.params.parentId ? this.$route.params.parentId : localStorage.getItem('parentId') ? localStorage.getItem('parentId') : 0,
+      parentId: 0,
+      showBack: false, // 显示目录后退按钮
+      // indexParent: localStorage.getItem('indexParent'),
+      number: localStorage.getItem('number') ? localStorage.getItem('number') : 0,
       toolbars: {
         bold: false, // 粗体
         italic: false, // 斜体
@@ -105,7 +111,7 @@ export default {
         }
       })
     },
-    detail(articleId) {
+    detail(articleId, index) {
       this.axios
         .get('/article/detail', {
           params: {
@@ -115,34 +121,51 @@ export default {
         .then(response => {
           this.content = response.data.data.content
           this.articleId = response.data.data.id
+          localStorage.setItem('articleId', articleId)
           console.log('this.content: ' + this.content)
           this.title = response.data.data.title
+          this.number = index
+          // this.indexParent = index
+          // localStorage.setItem('indexParent', index)
+          localStorage.setItem('number', this.number)
         })
         .catch(function (error) { // 请求失败处理
           console.log(error)
         })
     },
-    edit(articleId) {
-      console.log('edit: ' + articleId)
-      localStorage.setItem('articleId', articleId)
+    edit() {
+      console.log('edit: ' + this.articleId)
+      localStorage.setItem('articleId', this.articleId)
       this.$router.push({
         name: 'Edit',
-        params: {id: articleId}
+        params: {id: this.articleId}
       })
+    },
+    list(parentId, articleId) {
+      parentId = parentId || this.parentId
+      if (parentId !== this.parentId) {
+        this.showBack = true
+      }
+      this.axios
+        .post('/article/list', {'parentId': parentId})
+        .then(reseponse => {
+          this.articleList = reseponse.data.data
+        })
+      // 子目录点进去后, 展示详情.
+      if (articleId) {
+        this.detail(articleId)
+      }
     }
   },
   mounted() {
     this.$nextTick(() => {
-      this.axios
-        .post('/article/list', {'parentId': this.parentId})
-        .then(reseponse => {
-          this.articleList = reseponse.data.data
-        })
+      this.list()
     })
+    let id = this.articleId ? this.articleId : localStorage.getItem('articleId')
     this.axios
       .get('/article/detail', {
         params: {
-          'id': this.articleId
+          'id': id
         }
       })
       .then(response => {
@@ -178,6 +201,10 @@ export default {
 
 #menu-item {
   margin: 5px;
+}
+
+.active {
+  font-weight: bold;
 }
 
 </style>

@@ -5,6 +5,7 @@
     </div>
     <mavon-editor class="lang-vue" v-model="content" :ishljs="true" :codeStyle="codeStyle" @save="save"
                   @navigationToggle="addUrl" @imgAdd="imgAdd" ref="md"/>
+    <el-button :plain="true" @click="open2">成功</el-button>
   </div>
 </template>
 
@@ -38,9 +39,12 @@ export default {
           this.id = response.data.data.id
           this.title = response.data.data.title
           if (success) {
-            alert('\'保存成功\'')
+            this.$message({
+              message: '保存成功',
+              type: 'success'
+            })
           } else {
-            alert('\'保存失败, 原因为; \'' + response.data.errorMessage)
+            this.$message.error('\'保存失败, 原因为; \'' + response.data.errorMessage)
           }
         })
         .catch(function (error) { // 请求失败处理
@@ -72,27 +76,35 @@ export default {
       }).catch(function (error) { // 请求失败处理
         console.log(error)
       })
+    },
+    getDetail() {
+      console.log(localStorage.getItem('articleId'))
+      let id = this.$route.params.id ? this.$route.params.id : localStorage.getItem('articleId')
+      console.log('getDetail id: ' + id)
+      this.axios
+        .get('/article/detail', {
+          params: {
+            'id': id
+          }
+        })
+        .then(response => {
+          this.content = response.data.data.content
+          this.title = response.data.data.title
+          this.id = this.$route.params.id ? this.$route.params.id : localStorage.getItem('articleId')
+        })
+        .catch(function (error) { // 请求失败处理
+          console.log(error)
+        })
     }
   },
   mounted() {
-    this.axios
-      .get('/article/detail', {
-        params: {
-          'id': this.$route.params.id === null ? localStorage.getItem('articleId') : this.$route.params.id
-        }
-      })
-      .then(response => {
-        this.content = response.data.data.content
-        this.title = response.data.data.title
-        this.id = this.$route.params.id === null ? localStorage.getItem('articleId') : this.$route.params.id
-      })
-      .catch(function (error) { // 请求失败处理
-        console.log(error)
-      })
-    // this.$nextTick(() => {
-    //
-    // })
+    this.$nextTick(() => {
+      this.getDetail()
+    })
   }
+  // created() {
+  //   this.getDetail()
+  // }
   // computed() {
   //
   // }

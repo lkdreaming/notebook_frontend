@@ -4,9 +4,16 @@ import HelloWorld from '@/components/HelloWorld'
 import Edit from '@/components/mavonEditor/article/edit/Edit'
 import Detail from '@/components/mavonEditor/article/detail/Detail'
 import Login from '@/components/mavonEditor/user/login/Login'
+import TestMenu from '@/components/test/TestMenu'
 // import List from '@/components/mavonEditor/article/list/List'
 
 Vue.use(Router)
+
+// 当前页转同样路由时会报错.
+// const originalPush = Router.prototype.push
+// Router.prototype.push = function push(location) {
+//   return originalPush.call(this, location).catch(err => err)
+// }
 
 export default new Router({
   routes: [
@@ -29,11 +36,11 @@ export default new Router({
       path: '/login',
       name: 'Login',
       component: Login
+    },
+    {
+      path: '/testMenu',
+      name: 'TestMenu',
+      component: TestMenu
     }
-    // {
-    //   path: '/list',
-    //   name: 'List',
-    //   component: List
-    // }
   ]
 })
