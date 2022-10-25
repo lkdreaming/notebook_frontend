@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
+import Create from '@/components/mavonEditor/article/create/Create'
 import Edit from '@/components/mavonEditor/article/edit/Edit'
 import Detail from '@/components/mavonEditor/article/detail/Detail'
 import Login from '@/components/mavonEditor/user/login/Login'
@@ -21,6 +22,11 @@ export default new Router({
       path: '/',
       name: 'HelloWorld',
       component: HelloWorld
+    },
+    {
+      path: '/create',
+      name: 'Create',
+      component: Create
     },
     {
       path: '/edit',

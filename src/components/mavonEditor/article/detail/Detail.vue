@@ -3,12 +3,12 @@
     <!--    <el-row class="tac" id="article" style="height: 100%">-->
     <el-col :span="4">
       <ul id="menu">
-        <el-button style="margin-bottom: 10px">后退</el-button>
-        <li id="menu-item" v-for="(article, index) in articleList" :key="article">
-          <span @click="detail(article.id, index)" :class="{'active': index === number}">{{ article.title }}</span>
+        <li id="menu-item" v-for="(article, index) in articleList" :key="index">
+          <span @click="detailParent(article.id)"
+                :class="{'active': article.id === articleId}">{{ article.title }}</span>
           <ul>
-            <li id="menu-item" v-for="childArticle in article.childrenArticleVoList" :key="childArticle">
-              <span @click="list(childArticle.parentId, childArticle.id)">{{ childArticle.title }}</span>
+            <li id="menu-item" v-for="(childArticle, index2) in article.childrenArticleVoList" :key="index2">
+              <span @click="listChildren(childArticle.parentId, childArticle.id)">{{ childArticle.title }}</span>
             </li>
           </ul>
         </li>
@@ -16,6 +16,14 @@
     </el-col>
     <el-col :span="20" style="height: 100%">
       <h1 id="title">{{ title }}</h1>
+      <el-row style="margin-bottom: 20px">
+        <el-col :span="22">
+          <el-page-header @back="goBack" style="margin-bottom: 20px"></el-page-header>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="primary" icon="el-icon-plus" @click="create">新增文章</el-button>
+        </el-col>
+      </el-row>
       <mavon-editor class="lang-vue" :toolbars="toolbars"
                     v-model="content"
                     :subfield="false"
@@ -46,17 +54,20 @@
 <script>
 export default {
   name: 'Detail',
+  components: 'Back',
   data() {
     return {
       title: '',
       content: '',
-      articleId: '',
+      createNewArticleId: localStorage.getItem('createNewArticleId') ? localStorage.getItem('createNewArticleId') : 0,
+      articleIdStack: localStorage.getItem('articleIdStack') ? JSON.parse(localStorage.getItem('articleIdStack')) : [],
+      parentArticleIdStack: localStorage.getItem('parentArticleIdStack') ? JSON.parse(localStorage.getItem('parentArticleIdStack')) : [],
+      articleId: this.articleIdStack ? this.articleIdStack[this.articleIdStack.length - 1] : '',
       articleList: '',
       // parentId: this.$route.params.parentId ? this.$route.params.parentId : localStorage.getItem('parentId') ? localStorage.getItem('parentId') : 0,
+      // parentId: this.parentArticleIdStack ? this.parentArticleIdStack[this.parentArticleIdStack.length - 1] : 0,
       parentId: 0,
       showBack: false, // 显示目录后退按钮
-      // indexParent: localStorage.getItem('indexParent'),
-      number: localStorage.getItem('number') ? localStorage.getItem('number') : 0,
       toolbars: {
         bold: false, // 粗体
         italic: false, // 斜体
@@ -95,6 +106,53 @@ export default {
     }
   },
   methods: {
+    updateParentId(parentId) {
+      this.parentId = parentId
+      localStorage.setItem('parentId', this.parentId)
+    },
+    addArticleIdStack(articleId) {
+      this.articleIdStack.push(articleId)
+      localStorage.setItem('articleIdStack', JSON.stringify(this.articleIdStack))
+      this.articleId = this.articleIdStack[this.articleIdStack.length - 1]
+      localStorage.setItem('articleId', this.articleId)
+    },
+    updateArticleIdStack(articleId) {
+      if (this.articleIdStack) {
+        this.articleIdStack.pop()
+      }
+      this.articleIdStack.push(articleId)
+      localStorage.setItem('articleIdStack', JSON.stringify(this.articleIdStack))
+      this.articleId = this.articleIdStack[this.articleIdStack.length - 1]
+      localStorage.setItem('articleId', this.articleId)
+    },
+    updateCreateNewArticleId(articleId) {
+      this.createNewArticleId = articleId
+      localStorage.setItem('createNewArticleId', articleId)
+    },
+    delArticleIdStack() {
+      this.articleIdStack.pop()
+      localStorage.setItem('articleIdStack', JSON.stringify(this.articleIdStack))
+      this.articleId = this.articleIdStack[this.articleIdStack.length - 1]
+      localStorage.setItem('articleId', this.articleId)
+    },
+    addParentArticleIdStack(parentId) {
+      this.parentArticleIdStack.push(parentId)
+      localStorage.setItem('parentArticleIdStack', JSON.stringify(this.parentArticleIdStack))
+      this.parentId = this.parentArticleIdStack[this.parentArticleIdStack.length - 1]
+    },
+    updateParentArticleIdStack(parentId) {
+      if (this.parentArticleIdStack) {
+        this.parentArticleIdStack.pop()
+      }
+      this.parentArticleIdStack.push(parentId)
+      localStorage.setItem('parentArticleIdStack', JSON.stringify(this.parentArticleIdStack))
+      this.parentId = this.parentArticleIdStack[this.parentArticleIdStack.length - 1]
+    },
+    delParentArticleIdStack() {
+      this.parentArticleIdStack.pop()
+      localStorage.setItem('parentArticleIdStack', JSON.stringify(this.parentArticleIdStack))
+      this.parentId = this.parentArticleIdStack[this.parentArticleIdStack.length - 1]
+    },
     addUrl() {
       this.$nextTick(function () {
         let _aList = document.querySelectorAll('.v-note-navigation-content a')
@@ -111,8 +169,9 @@ export default {
         }
       })
     },
-    detail(articleId, index) {
-      this.axios
+    async detail(articleId) {
+      // eslint-disable-next-line no-return-await
+      return await this.axios
         .get('/article/detail', {
           params: {
             'id': articleId
@@ -121,60 +180,120 @@ export default {
         .then(response => {
           this.content = response.data.data.content
           this.articleId = response.data.data.id
-          localStorage.setItem('articleId', articleId)
-          console.log('this.content: ' + this.content)
           this.title = response.data.data.title
-          this.number = index
-          // this.indexParent = index
-          // localStorage.setItem('indexParent', index)
-          localStorage.setItem('number', this.number)
+          this.updateParentId(response.data.data.parentId)
+          return response
         })
         .catch(function (error) { // 请求失败处理
           console.log(error)
         })
     },
+    async detailParent(articleId) {
+      let res = await this.detail(articleId)
+      let newParentId = res.data.data.parentId
+      if (parseInt(newParentId) === parseInt(this.parentId)) {
+        console.log('\'1111111111111111sa\'')
+        this.updateArticleIdStack(this.articleId)
+      } else {
+        console.log('\'22222222222222222sa\'')
+        this.addArticleIdStack(this.articleId)
+        this.parentId = newParentId
+      }
+      this.updateArticleIdStack(this.articleId)
+      this.updateCreateNewArticleId(this.articleId)
+    },
+    async detailChild(articleId, parentArticleId) {
+      await this.detail(articleId)
+      this.addArticleIdStack(articleId)
+    },
     edit() {
       console.log('edit: ' + this.articleId)
-      localStorage.setItem('articleId', this.articleId)
+      // this.addArticleIdStack(this.articleId)
       this.$router.push({
         name: 'Edit',
-        params: {id: this.articleId}
+        params: {
+          id: this.articleId,
+          parentId: this.parentId
+        }
       })
     },
-    list(parentId, articleId) {
+    create() {
+      // this.addArticleIdStack(this.articleId)
+      this.$router.push({
+        name: 'Create',
+        params: {
+          parentId: this.createNewArticleId
+        }
+      })
+    },
+    async list(parentId, articleId) {
       parentId = parentId || this.parentId
-      if (parentId !== this.parentId) {
+      console.log('list().parentId: ' + parentId)
+      if (this.parentId !== 0) {
         this.showBack = true
       }
-      this.axios
+      let res = await this.axios
         .post('/article/list', {'parentId': parentId})
-        .then(reseponse => {
-          this.articleList = reseponse.data.data
+        .then(response => {
+          this.articleList = response.data.data
+          if (!this.articleId && this.articleList) {
+            this.articleId = this.articleIdStack.length !== 0 ? this.articleIdStack[this.articleIdStack.length - 1] : this.articleList[0].id
+            localStorage.setItem('articleId', JSON.stringify(this.articleId))
+          }
+          return response
         })
       // 子目录点进去后, 展示详情.
       if (articleId) {
-        this.detail(articleId)
+        await this.detail(articleId)
       }
+      return res
+    },
+    async listChildren(parentId, articleId) {
+      await this.list(parentId, articleId)
+      await this.addArticleIdStack(articleId)
+      await this.updateCreateNewArticleId(articleId)
+    },
+    async goBack() {
+      await this.delArticleIdStack()
+      let res = await this.axios
+        .get('/article/detail', {
+          params: {
+            'id': this.parentId
+          }
+        })
+        .then(response => {
+          return response
+        })
+        .catch(function (error) { // 请求失败处理
+          console.log(error)
+        })
+      await this.list(res.data.data.parentId)
+      await this.detail(this.articleId)
+      console.log('this.articleId: ' + this.articleId)
     }
   },
-  mounted() {
-    this.$nextTick(() => {
-      this.list()
+  async mounted() {
+    console.log('this.parentId: ' + this.parentId)
+    // console.log('this.articleId: ' + this.articleId)
+    await Promise.all(
+      [this.list()]
+    ).then(() => {
+      this.axios
+        .get('/article/detail', {
+          params: {
+            'id': this.articleId,
+            'parentId': this.parentId
+          }
+        })
+        .then(response => {
+          this.content = response.data.data.content
+          this.title = response.data.data.title
+          // this.updateArticleIdStack(this.articleId)
+        })
+        .catch(function (error) { // 请求失败处理
+          console.log(error)
+        })
     })
-    let id = this.articleId ? this.articleId : localStorage.getItem('articleId')
-    this.axios
-      .get('/article/detail', {
-        params: {
-          'id': id
-        }
-      })
-      .then(response => {
-        this.content = response.data.data.content
-        this.title = response.data.data.title
-      })
-      .catch(function (error) { // 请求失败处理
-        console.log(error)
-      })
   }
 }
 </script>
@@ -193,6 +312,7 @@ export default {
 
 #title {
   font-size: 60px;
+  margin-bottom: 50px;
 }
 
 #menu {
@@ -205,6 +325,7 @@ export default {
 
 .active {
   font-weight: bold;
+  font-size: 20px;
 }
 
 </style>

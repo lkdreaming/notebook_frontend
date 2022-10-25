@@ -57,18 +57,12 @@ export default {
     }
   },
   methods: {
-    logout: function () {
+    async logout() {
       console.log('logout')
-      this.axios
+      await this.axios
         .post('/user/doLogout')
-        .then(response => {
-          localStorage.removeItem('token')
-          localStorage.removeItem('tokenExpireTimeStamp')
-          localStorage.removeItem('RefreshedToken')
-          localStorage.removeItem('tokenData')
-          this.tokenData = null
-          this.username = null
-          this.user_head_img_url = null
+        .then(() => {
+          localStorage.clear()
           this.$router.push('/login')
           this.$router.go(0)
         })
@@ -82,8 +76,6 @@ export default {
         this.user_head_img_url = tokenData.userHeadImageUrl
       }
       this.isShow = localStorage.getItem('tokenData') != null
-      console.log('tokenData: ' + this.tokenData)
-      console.log('show: ' + this.isShow)
     })
   }
 }

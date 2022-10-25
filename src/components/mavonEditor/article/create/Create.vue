@@ -11,14 +11,13 @@
 
 <script>
 export default {
-  name: 'Edit',
+  name: 'Create',
   data: function () {
     return {
-      title: '未命名标题',
+      title: '',
       content: '',
       codeStyle: 'agate',
-      id: '',
-      parentId: 0
+      id: ''
     }
   },
   methods: {
@@ -29,7 +28,7 @@ export default {
       this.axios
         .post('/article/addOrUpdate', {
           'id': this.id,
-          'parentId': this.parentId,
+          'parentId': this.$route.params.parentId ? this.$route.params.parentId : 0,
           'title': this.title,
           'content': this.content,
           'type': 0
@@ -78,35 +77,14 @@ export default {
         console.log(error)
       })
     },
-    getDetail() {
-      console.log(localStorage.getItem('articleId'))
-      let id = this.$route.params.id ? this.$route.params.id : localStorage.getItem('articleId')
-      console.log('getDetail id: ' + id)
-      this.axios
-        .get('/article/detail', {
-          params: {
-            'id': id
-          }
-        })
-        .then(response => {
-          this.content = response.data.data.content
-          this.title = response.data.data.title
-          this.id = this.$route.params.id ? this.$route.params.id : localStorage.getItem('articleId')
-          this.parentId = this.$route.params.parentId ? this.$route.params.parentId : localStorage.getItem('parentId')
-          localStorage.setItem('parentId', this.parentId)
-        })
-        .catch(function (error) { // 请求失败处理
-          console.log(error)
-        })
-    },
     goBack() {
       this.$router.go(-1)
     }
   },
   mounted() {
-    this.$nextTick(() => {
-      this.getDetail()
-    })
+    // this.$nextTick(() => {
+    //   this.getDetail()
+    // })
   }
   // created() {
   //   this.getDetail()

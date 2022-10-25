@@ -22,6 +22,19 @@ Vue.use(Vuex)
 
 Vue.use(VueTreeList)
 
+Vue.config.silent = true
+
+Vue.component('back', {
+  template: '<template>\n' +
+    '  <el-button style="margin-bottom: 10px" @click="back">后退</el-button>\n' +
+    '</template>',
+  methods: {
+    back() {
+      this.$router.go(-1)
+    }
+  }
+})
+
 // 不同环境用不同的域名
 // process.env.BASE_API是config/*.env.js中的BASE_API
 axios.defaults.baseURL = process.env.BASE_API
@@ -51,7 +64,6 @@ let isRefreshing = false
 
 axios.interceptors.request.use(
   config => {
-    console.log('jwtToken: ' + jwtToken)
     if (isTokenExpired()) { // 如果过期了, 则需要用RefreshedToken换新的token
       if (!isRefreshing) {
         isRefreshing = true
