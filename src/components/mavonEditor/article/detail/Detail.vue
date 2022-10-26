@@ -270,7 +270,18 @@ export default {
       await this.list(res.data.data.parentId)
       await this.detail(this.articleId)
       console.log('this.articleId: ' + this.articleId)
+    },
+    escEvent() {
+      if (window.event.keyCode === 27) {
+        this.createNewArticleId = this.parentId
+        this.articleId = 0
+        this.title = ''
+        this.content = ''
+      }
     }
+  },
+  created() {
+    document.addEventListener('keydown', this.escEvent)
   },
   async mounted() {
     console.log('this.parentId: ' + this.parentId)
