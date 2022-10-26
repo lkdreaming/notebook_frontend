@@ -100,14 +100,20 @@ Vue.prototype.tokenData = localStorage.getItem('tokenData')
 
 Vue.prototype.figureBedUrl = process.env.FIGURE_BED_URL
 
+Vue.prototype.uploadPictureCode = 0
+Vue.prototype.uploadVideoCode = 1
+Vue.prototype.uploadFileCode = 2
+
 /* eslint-disable no-new */
-new Vue({
+var vm = new Vue({
   el: '#app',
   router,
   render: h => h(App),
   components: {App},
   template: '<App/>'
 })
+
+export default vm
 
 // axios.interceptors.response.use(
 //   response => {

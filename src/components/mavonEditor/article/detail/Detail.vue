@@ -31,7 +31,16 @@
                     :editable="false"
                     :codeStyle="'agate'"
                     @navigationToggle="addUrl"
-                    :fontSize="'18px'">
+                    :fontSize="'18px'"
+                    :xssOptions="{
+                      whiteList: {
+                        iframe: ['src', 'height', 'width'],
+                        video: ['height', 'width', 'controls'],
+                        source: ['src', 'type'],
+                        div: ['style', 'height', 'width', 'align'],
+                      },
+                    }"
+      >
         <template v-slot:right-toolbar-after>
           <button
             type="button"

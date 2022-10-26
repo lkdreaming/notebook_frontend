@@ -4,8 +4,37 @@
     <div>
       <el-input placeholder="请输入标题" v-model="title" style="margin-bottom: 20px"></el-input>
     </div>
-    <mavon-editor class="lang-vue" v-model="content" :ishljs="true" :codeStyle="codeStyle" @save="save"
-                  @navigationToggle="addUrl" @imgAdd="imgAdd" ref="md"/>
+    <mavon-editor class="lang-vue" v-model="content"
+                  :ishljs="true"
+                  :codeStyle="codeStyle"
+                  @save="save"
+                  @navigationToggle="addUrl"
+                  @imgAdd="imgAdd"
+                  ref="md"
+                  :xssOptions="{
+                      whiteList: {
+                        iframe: ['src', 'height', 'width'],
+                        video: ['height', 'width', 'controls'],
+                        source: ['src', 'type'],
+                        div: ['style', 'height', 'width', 'align'],
+                      },
+                    }"
+    >
+      <template v-slot:left-toolbar-after>
+        <button
+          type="button"
+          title="文件上传"
+          class="op-icon fa markdown-upload iconfont iconupload"
+          aria-hidden="true"
+          @click="uploadVideo"
+        >
+          <!-- 这里用的是element-ui给出的图标 -->
+          <i class="el-icon-video-camera"/>
+        </button>
+      </template>
+    </mavon-editor>
+    <!-- 在这里放一个隐藏的input，用来选择文件 -->
+    <input ref="uploadInput" style="display: none" type="file" @change="uploadFileChange($event, uploadVideoCode)">
   </div>
 </template>
 
@@ -18,7 +47,9 @@ export default {
       content: '',
       codeStyle: 'agate',
       id: '',
-      parentId: 0
+      parentId: 0,
+      uploadVideoCode: this.uploadVideoCode,
+      uploadFileCode: this.uploadFileCode
     }
   },
   methods: {
@@ -80,7 +111,8 @@ export default {
     },
     getDetail() {
       console.log(localStorage.getItem('articleId'))
-      let id = this.$route.params.id ? this.$route.params.id : localStorage.getItem('articleId')
+      // eslint-disable-next-line no-useless-escape
+      let id = this.$route.params.id ? this.$route.params.id : localStorage.getItem('articleId').replaceAll('\"', '')
       console.log('getDetail id: ' + id)
       this.axios
         .get('/article/detail', {
@@ -99,8 +131,49 @@ export default {
           console.log(error)
         })
     },
+    // 这是我们自定义的按钮触发的方法，这里也可以在自定义其他功能时做一些其他操作。
+    uploadVideo() {
+      // 通过ref找到隐藏的input标签，触发它的点击方法
+      this.$refs.uploadInput.click()
+    },
+    // 监听input获取文件的状态
+    uploadFileChange(e, fileType) {
+      // 获取到input选取的文件
+      const file = e.target.files[0]
+      // 创建form格式的数据，将文件放入form中，logo是与后台定义的字段
+      const formdata = new FormData()
+      formdata.append('logo', file)
+      console.log(JSON.stringify(formdata))
+      // 发送请求，这里是大家各自的axios请求，方法大家按照各自项目更换就好啦
+      let uri = fileType ? '/file/upload' + '?fileType=' + fileType : '/file/upload'
+
+      this.axios.post(uri, formdata).then(res => {
+        // 这里获取到的是mavon编辑器实例，上面挂载着很多方法
+        const $vm = this.$refs.md
+        let prefix = ''
+        let subfix = ''
+        let str = ''
+        if (fileType === this.uploadVideoCode) {
+          prefix = '\n\n<video width="30%" controls>\n'
+          subfix = '</video>\n'
+          str = '  <source src="' + res.data.data.urlPre + '/' + res.data.data.uri + '" type="video/mp4">\n'
+        } else if (fileType === this.uploadFileCode) {
+          prefix = `[${file.name}]`
+          subfix = ''
+          str = '(' + res.data.data.urlPre + '/' + res.data.data.uri + ')'
+        }
+        // 将文件名与文件路径插入当前光标位置，这是mavon-editor 内置的方法
+        $vm.insertText($vm.getTextareaDom(),
+          {
+            prefix: prefix,
+            subfix: subfix,
+            str: str
+          })
+      })
+    },
     goBack() {
       this.$router.go(-1)
+      // location.reload()
     }
   },
   mounted() {
