@@ -32,14 +32,7 @@
                     :codeStyle="'agate'"
                     @navigationToggle="addUrl"
                     :fontSize="'18px'"
-                    :xssOptions="{
-                      whiteList: {
-                        iframe: ['src', 'height', 'width'],
-                        video: ['height', 'width', 'controls'],
-                        source: ['src', 'type'],
-                        div: ['style', 'height', 'width', 'align'],
-                      },
-                    }"
+                    :xssOptions="xssOptions"
       >
         <template v-slot:right-toolbar-after>
           <button
@@ -76,6 +69,7 @@ export default {
       // parentId: this.$route.params.parentId ? this.$route.params.parentId : localStorage.getItem('parentId') ? localStorage.getItem('parentId') : 0,
       // parentId: this.parentArticleIdStack ? this.parentArticleIdStack[this.parentArticleIdStack.length - 1] : 0,
       parentId: 0,
+      xssOptions: this.xssOptions,
       showBack: false, // 显示目录后退按钮
       toolbars: {
         bold: false, // 粗体

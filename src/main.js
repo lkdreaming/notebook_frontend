@@ -12,6 +12,8 @@ import Vuex from 'vuex'
 import App from './App'
 
 import VueTreeList from 'vue-tree-list'
+import Editor from './components/mavonEditor/article/editor/Editor'
+
 // import 'bootstrap/dist/js/bootstrap.min.js'
 
 Vue.use(mavonEditor)
@@ -34,6 +36,8 @@ Vue.component('back', {
     }
   }
 })
+
+Vue.component('editor', Editor)
 
 // 不同环境用不同的域名
 // process.env.BASE_API是config/*.env.js中的BASE_API
@@ -103,6 +107,18 @@ Vue.prototype.figureBedUrl = process.env.FIGURE_BED_URL
 Vue.prototype.uploadPictureCode = 0
 Vue.prototype.uploadVideoCode = 1
 Vue.prototype.uploadFileCode = 2
+
+Vue.prototype.editTypeCreate = 0
+Vue.prototype.editTypeEdit = 1
+
+Vue.prototype.xssOptions = {
+  whiteList: {
+    iframe: ['src', 'height', 'width'],
+    video: ['height', 'width', 'controls'],
+    source: ['src', 'type'],
+    div: ['style', 'height', 'width', 'align']
+  }
+}
 
 /* eslint-disable no-new */
 var vm = new Vue({
