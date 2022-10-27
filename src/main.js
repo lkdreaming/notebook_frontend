@@ -2,8 +2,6 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import router from './router'
-import mavonEditor from 'mavon-editor'
-import 'mavon-editor/dist/css/index.css'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
@@ -11,18 +9,36 @@ import Vuex from 'vuex'
 
 import App from './App'
 
-import VueTreeList from 'vue-tree-list'
-import Editor from './components/mavonEditor/article/editor/Editor'
+// import Editor from './components/v-md-editor/Editor'
+// mavonEditor的引入
+import MavonEditor from 'mavon-editor'
+import 'mavon-editor/dist/css/index.css'
+import Editor from './components/mavonEditor/Editor'
+import markdownItMermaid from '@liradb2000/markdown-it-mermaid'
 
-// import 'bootstrap/dist/js/bootstrap.min.js'
+Vue.use(MavonEditor)
+MavonEditor.mavonEditor.getMarkdownIt().use(markdownItMermaid)
+// MavonEditor.mixins[0].data().markdownIt.use(markdownItMermaid)
+// console.log('it: ' + mavonEditor.markdownIt)
+// mavonEditor.markdownIt.use(markdownItMermaid)
 
-Vue.use(mavonEditor)
+// v-md-editor的引入
+// import VueMarkdownEditor from '@kangc/v-md-editor'
+// import '@kangc/v-md-editor/lib/style/base-editor.css'
+// import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js'
+// import '@kangc/v-md-editor/lib/theme/style/vuepress.css'
+//
+// import Prism from 'prismjs'
+
+// VueMarkdownEditor.use(vuepressTheme, {
+//   Prism
+// })
+//
+// Vue.use(VueMarkdownEditor)
 
 Vue.use(ElementUI)
 
 Vue.use(Vuex)
-
-Vue.use(VueTreeList)
 
 Vue.config.silent = true
 
