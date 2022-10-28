@@ -25,7 +25,7 @@
     "jquery": "^1.12.4",
     "json-bigint": "^1.0.0",
     "less-loader": "^4.1.0",
-    "mavon-editor": "^2.10.4",
+    "mavon-editor": "^2.7.5",
     "module": "^1.2.5",
     "popper.js": "^1.16.1",
     "pug": "^3.0.2",

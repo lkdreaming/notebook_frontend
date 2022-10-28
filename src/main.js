@@ -17,10 +17,9 @@ import Editor from './components/mavonEditor/Editor'
 import markdownItMermaid from '@liradb2000/markdown-it-mermaid'
 
 Vue.use(MavonEditor)
-MavonEditor.mavonEditor.getMarkdownIt().use(markdownItMermaid)
-// MavonEditor.mixins[0].data().markdownIt.use(markdownItMermaid)
-// console.log('it: ' + mavonEditor.markdownIt)
-// mavonEditor.markdownIt.use(markdownItMermaid)
+
+// MavonEditor.mavonEditor.getMarkdownIt().use(markdownItMermaid)  // v2.10.4 调用markdownIt的方式
+MavonEditor.markdownIt.use(markdownItMermaid)
 
 // v-md-editor的引入
 // import VueMarkdownEditor from '@kangc/v-md-editor'
