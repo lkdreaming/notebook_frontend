@@ -9,6 +9,8 @@ import Vuex from 'vuex'
 
 import App from './App'
 
+import Delete from './components/article/Delete'
+
 // import Editor from './components/v-md-editor/Editor'
 // mavonEditor的引入
 import MavonEditor from 'mavon-editor'
@@ -53,6 +55,7 @@ Vue.component('back', {
 })
 
 Vue.component('editor', Editor)
+Vue.component('delete', Delete)
 
 // 不同环境用不同的域名
 // process.env.BASE_API是config/*.env.js中的BASE_API

@@ -2,28 +2,44 @@
   <div id="app">
     <!--    <el-row class="tac" id="article" style="height: 100%">-->
     <el-col :span="4">
-      <ul id="menu">
-        <li id="menu-item" v-for="(article, index) in articleList" :key="index">
-          <span @click="detailParent(article.id)"
-                :class="{'active': article.id === articleId}">{{ article.title }}</span>
-          <ul>
-            <li id="menu-item" v-for="(childArticle, index2) in article.childrenArticleVoList" :key="index2">
-              <span @click="listChildren(childArticle.parentId, childArticle.id)">{{ childArticle.title }}</span>
-            </li>
-          </ul>
-        </li>
-      </ul>
+      <el-card class="box-card" shadow="hover">
+        <div slot="header" class="clearfix">
+          <span><B style="font-size: 20px">文章目录</B></span>
+        </div>
+        <el-tree :props="props"
+                 lazy
+                 :load="loadNode"
+                 accordion
+                 :data="nodeData"
+                 :highlight-current="isHighlightCurrent"
+                 :check-on-click-node="isCheckOnClickNode"
+                 @node-click="handleNodeClick">
+        </el-tree>
+      </el-card>
     </el-col>
-    <el-col :span="20" style="height: 100%">
+    <el-col :span="20">
       <h1 id="title">{{ title }}</h1>
-      <el-row style="margin-bottom: 20px">
-        <el-col :span="22">
-          <el-page-header @back="goBack" style="margin-bottom: 20px"></el-page-header>
+      <el-row>
+        <el-col :span="2" style="float: right">
+          <delete :articleId="articleId"></delete>
         </el-col>
-        <el-col :span="2">
-          <el-button type="primary" icon="el-icon-plus" @click="create">新增文章</el-button>
+        <el-col :span="2" style="float: right">
+          <el-dropdown @command="create">
+            <el-button type="primary">+ 新增文章<i class="el-icon-arrow-down el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item :command="parentId">在本文章的同级目录创建文章</el-dropdown-item>
+              <el-dropdown-item :command="articleId">创建本文章的子文章</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
         </el-col>
       </el-row>
+      <!--      <el-row>-->
+      <!--        <el-col :span="2"  style="float: right">-->
+      <!--          <delete :articleId="articleId"></delete>-->
+      <!--        </el-col>-->
+      <!--      </el-row>-->
+      <el-divider></el-divider>
       <mavon-editor class="lang-vue" :toolbars="toolbars"
                     v-model="content"
                     :subfield="false"
@@ -61,6 +77,9 @@ export default {
     return {
       title: '',
       content: '',
+      nodeData: [],
+      isHighlightCurrent: false,
+      isCheckOnClickNode: true,
       createNewArticleId: localStorage.getItem('createNewArticleId') ? localStorage.getItem('createNewArticleId') : 0,
       articleIdStack: localStorage.getItem('articleIdStack') ? JSON.parse(localStorage.getItem('articleIdStack')) : [],
       parentArticleIdStack: localStorage.getItem('parentArticleIdStack') ? JSON.parse(localStorage.getItem('parentArticleIdStack')) : [],
@@ -105,6 +124,11 @@ export default {
         /* 2.2.1 */
         subfield: false, // 单双栏模式
         preview: false // 预览
+      },
+      props: {
+        label: 'title',
+        children: 'title',
+        isLeaf: 'leaf'
       }
     }
   },
@@ -112,6 +136,10 @@ export default {
     updateParentId(parentId) {
       this.parentId = parentId
       localStorage.setItem('parentId', this.parentId)
+    },
+    updateArticleId(articleId) {
+      this.articleId = articleId
+      localStorage.setItem('articleId', this.articleId)
     },
     addArticleIdStack(articleId) {
       this.articleIdStack.push(articleId)
@@ -137,24 +165,6 @@ export default {
       localStorage.setItem('articleIdStack', JSON.stringify(this.articleIdStack))
       this.articleId = this.articleIdStack[this.articleIdStack.length - 1]
       localStorage.setItem('articleId', this.articleId)
-    },
-    addParentArticleIdStack(parentId) {
-      this.parentArticleIdStack.push(parentId)
-      localStorage.setItem('parentArticleIdStack', JSON.stringify(this.parentArticleIdStack))
-      this.parentId = this.parentArticleIdStack[this.parentArticleIdStack.length - 1]
-    },
-    updateParentArticleIdStack(parentId) {
-      if (this.parentArticleIdStack) {
-        this.parentArticleIdStack.pop()
-      }
-      this.parentArticleIdStack.push(parentId)
-      localStorage.setItem('parentArticleIdStack', JSON.stringify(this.parentArticleIdStack))
-      this.parentId = this.parentArticleIdStack[this.parentArticleIdStack.length - 1]
-    },
-    delParentArticleIdStack() {
-      this.parentArticleIdStack.pop()
-      localStorage.setItem('parentArticleIdStack', JSON.stringify(this.parentArticleIdStack))
-      this.parentId = this.parentArticleIdStack[this.parentArticleIdStack.length - 1]
     },
     addUrl() {
       this.$nextTick(function () {
@@ -191,27 +201,7 @@ export default {
           console.log(error)
         })
     },
-    async detailParent(articleId) {
-      let res = await this.detail(articleId)
-      let newParentId = res.data.data.parentId
-      if (parseInt(newParentId) === parseInt(this.parentId)) {
-        console.log('\'1111111111111111sa\'')
-        this.updateArticleIdStack(this.articleId)
-      } else {
-        console.log('\'22222222222222222sa\'')
-        this.addArticleIdStack(this.articleId)
-        this.parentId = newParentId
-      }
-      this.updateArticleIdStack(this.articleId)
-      this.updateCreateNewArticleId(this.articleId)
-    },
-    async detailChild(articleId, parentArticleId) {
-      await this.detail(articleId)
-      this.addArticleIdStack(articleId)
-    },
     edit() {
-      console.log('edit: ' + this.articleId)
-      // this.addArticleIdStack(this.articleId)
       this.$router.push({
         name: 'Edit',
         params: {
@@ -220,18 +210,16 @@ export default {
         }
       })
     },
-    create() {
-      // this.addArticleIdStack(this.articleId)
+    create(parentId) {
       this.$router.push({
         name: 'Create',
         params: {
-          parentId: this.createNewArticleId
+          parentId: parentId
         }
       })
     },
     async list(parentId, articleId) {
       parentId = parentId || this.parentId
-      console.log('list().parentId: ' + parentId)
       if (this.parentId !== 0) {
         this.showBack = true
       }
@@ -251,29 +239,6 @@ export default {
       }
       return res
     },
-    async listChildren(parentId, articleId) {
-      await this.list(parentId, articleId)
-      await this.addArticleIdStack(articleId)
-      await this.updateCreateNewArticleId(articleId)
-    },
-    async goBack() {
-      await this.delArticleIdStack()
-      let res = await this.axios
-        .get('/article/detail', {
-          params: {
-            'id': this.parentId
-          }
-        })
-        .then(response => {
-          return response
-        })
-        .catch(function (error) { // 请求失败处理
-          console.log(error)
-        })
-      await this.list(res.data.data.parentId)
-      await this.detail(this.articleId)
-      console.log('this.articleId: ' + this.articleId)
-    },
     escEvent() {
       if (window.event.keyCode === 27) {
         this.createNewArticleId = this.parentId
@@ -281,6 +246,41 @@ export default {
         this.title = ''
         this.content = ''
       }
+    },
+    async loadNode(node, resolve) {
+      let res = null
+      if (node.level === 0) {
+        res = await this.axios
+          .post('/article/list', {'parentId': 0})
+          .then(response => {
+            this.articleList = response.data.data
+            if (!this.articleId && this.articleList) {
+              this.articleId = this.articleIdStack.length !== 0 ? this.articleIdStack[this.articleIdStack.length - 1] : this.articleList[0].id
+              localStorage.setItem('articleId', JSON.stringify(this.articleId))
+            }
+            return this.articleList
+          })
+        return resolve(res)
+      } else { // 打开子节点
+        // this.detail(node.data.id)
+        res = await this.axios
+          .post('/article/list', {'parentId': node.data.id})
+          .then(response => {
+            this.articleList = response.data.data
+            if (!this.articleId && this.articleList) {
+              this.articleId = this.articleIdStack.length !== 0 ? this.articleIdStack[this.articleIdStack.length - 1] : this.articleList[0].id
+              localStorage.setItem('articleId', JSON.stringify(this.articleId))
+            }
+            return this.articleList
+          })
+        return resolve(res)
+      }
+    },
+    handleNodeClick(data) {
+      // alert(JSON.stringify(data))
+      this.detail(data.id)
+      this.updateArticleId(data.id)
+      this.updateParentId(data.parentId)
     }
   },
   created() {
@@ -315,9 +315,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 #app {
-  width: 90%;
+  width: 95%;
   height: 100%;
-  margin: 50px auto;
 }
 
 #app .lang-vue {
@@ -326,15 +325,10 @@ export default {
 
 #title {
   font-size: 60px;
-  margin-bottom: 50px;
 }
 
 #menu {
   text-align: left;
-}
-
-#menu-item {
-  margin: 5px;
 }
 
 .active {
