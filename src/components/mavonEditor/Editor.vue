@@ -45,7 +45,10 @@ export default {
       codeStyle: 'agate',
       uploadVideoCode: this.uploadVideoCode,
       uploadFileCode: this.uploadFileCode,
-      xssOptions: this.xssOptions
+      xssOptions: this.xssOptions,
+      rules: {
+        name: [{required: true, message: '请输入标题'}]
+      }
     }
   },
   getArticleId() {
@@ -123,6 +126,10 @@ export default {
       // 获取预览文本
       // console.log(this.content) // 这里是原markdown文本
       // console.log(val) // 这个是解析出的html
+      if (!this.title) {
+        this.$message.error('title不能为空')
+        return
+      }
       await this.axios
         .post('/article/addOrUpdate', {
           'id': this.id,

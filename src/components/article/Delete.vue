@@ -23,7 +23,11 @@ export default {
     handleDel() {
       this.axios
         .get('/article/delete?id=' + this.articleId)
-        .then(() => this.$router.go(0))
+        .then(() => {
+          this.articleId = 1
+          localStorage.setItem('articleId', '' + this.articleId)
+          this.$router.go(0)
+        })
     }
   }
 }
