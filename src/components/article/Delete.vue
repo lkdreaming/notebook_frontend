@@ -10,11 +10,12 @@
 export default {
   name: 'Delete',
   props: {
-    articleId: Number
+    articleId: Number,
+    title: String
   },
   data() {
     return {
-      msg: '确定要删除该文章吗? <span style="color:red"><b>如果删除该文章那么连同在它下面的字文章也会被删除</b></span>',
+      msg: '确定要删除《' + this.title + '》这篇文章吗?\n如果删除该文章那么连同在它下面的字文章也会被删除!!',
       dialogVisible: false
     }
   },

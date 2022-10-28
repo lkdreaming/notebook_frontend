@@ -21,7 +21,7 @@
       <h1 id="title">{{ title }}</h1>
       <el-row>
         <el-col :span="2" style="float: right">
-          <delete :articleId="articleId"></delete>
+          <delete :articleId="articleId" :title="title"></delete>
         </el-col>
         <el-col :span="2" style="float: right">
           <el-dropdown @command="create">
