@@ -34,23 +34,18 @@
           </el-dropdown>
         </el-col>
       </el-row>
-      <!--      <el-row>-->
-      <!--        <el-col :span="2"  style="float: right">-->
-      <!--          <delete :articleId="articleId"></delete>-->
-      <!--        </el-col>-->
-      <!--      </el-row>-->
       <el-divider></el-divider>
       <mavon-editor class="lang-vue" :toolbars="toolbars"
                     v-model="content"
-                    :subfield="false"
+                    :subfield="subfield"
                     :defaultOpen="'preview'"
-                    :editable="false"
+                    :editable="editable"
                     :codeStyle="'agate'"
                     @navigationToggle="addUrl"
                     :fontSize="'18px'"
                     :xssOptions="xssOptions"
       >
-        <template v-slot:right-toolbar-after>
+        <template v-slot:right-toolbar-after v-if="isDisplayEditButton">
           <button
             type="button"
             title="编辑"
@@ -65,7 +60,6 @@
 
       </mavon-editor>
     </el-col>
-    <!--    </el-row>-->
   </div>
 </template>
 
@@ -83,13 +77,17 @@ export default {
       createNewArticleId: localStorage.getItem('createNewArticleId') ? localStorage.getItem('createNewArticleId') : 0,
       articleIdStack: localStorage.getItem('articleIdStack') ? JSON.parse(localStorage.getItem('articleIdStack')) : [],
       parentArticleIdStack: localStorage.getItem('parentArticleIdStack') ? JSON.parse(localStorage.getItem('parentArticleIdStack')) : [],
-      articleId: this.articleIdStack ? this.articleIdStack[this.articleIdStack.length - 1] : '',
+      // articleId: this.articleIdStack ? this.articleIdStack[this.articleIdStack.length - 1] : 0,
+      articleId: localStorage.getItem('articleId') ? localStorage.getItem('articleId') : 1,
       articleList: '',
       // parentId: this.$route.params.parentId ? this.$route.params.parentId : localStorage.getItem('parentId') ? localStorage.getItem('parentId') : 0,
       // parentId: this.parentArticleIdStack ? this.parentArticleIdStack[this.parentArticleIdStack.length - 1] : 0,
       parentId: 0,
       xssOptions: this.xssOptions,
       showBack: false, // 显示目录后退按钮
+      editable: false, // 是否启动编辑
+      subfield: false, // 是否双栏显示
+      isDisplayEditButton: true,
       toolbars: {
         bold: false, // 粗体
         italic: false, // 斜体
@@ -140,6 +138,15 @@ export default {
     updateArticleId(articleId) {
       this.articleId = articleId
       localStorage.setItem('articleId', this.articleId)
+      if (parseInt(this.articleId) === 1) {
+        this.editable = true
+        this.subfield = true
+        this.isDisplayEditButton = false
+      } else {
+        this.editable = false
+        this.subfield = false
+        this.isDisplayEditButton = true
+      }
     },
     addArticleIdStack(articleId) {
       this.articleIdStack.push(articleId)
@@ -218,26 +225,17 @@ export default {
         }
       })
     },
-    async list(parentId, articleId) {
+    list(parentId) {
       parentId = parentId || this.parentId
       if (this.parentId !== 0) {
         this.showBack = true
       }
-      let res = await this.axios
+      return this.axios
         .post('/article/list', {'parentId': parentId})
         .then(response => {
           this.articleList = response.data.data
-          if (!this.articleId && this.articleList) {
-            this.articleId = this.articleIdStack.length !== 0 ? this.articleIdStack[this.articleIdStack.length - 1] : this.articleList[0].id
-            localStorage.setItem('articleId', JSON.stringify(this.articleId))
-          }
           return response
         })
-      // 子目录点进去后, 展示详情.
-      if (articleId) {
-        await this.detail(articleId)
-      }
-      return res
     },
     escEvent() {
       if (window.event.keyCode === 27) {
@@ -254,10 +252,6 @@ export default {
           .post('/article/list', {'parentId': 0})
           .then(response => {
             this.articleList = response.data.data
-            if (!this.articleId && this.articleList) {
-              this.articleId = this.articleIdStack.length !== 0 ? this.articleIdStack[this.articleIdStack.length - 1] : this.articleList[0].id
-              localStorage.setItem('articleId', JSON.stringify(this.articleId))
-            }
             return this.articleList
           })
         return resolve(res)
@@ -300,6 +294,15 @@ export default {
           }
         })
         .then(response => {
+          if (parseInt(this.articleId) === 1) {
+            this.editable = true
+            this.subfield = true
+            this.isDisplayEditButton = false
+          } else {
+            this.editable = false
+            this.subfield = false
+            this.isDisplayEditButton = true
+          }
           this.content = response.data.data.content
           this.title = response.data.data.title
           // this.updateArticleIdStack(this.articleId)
