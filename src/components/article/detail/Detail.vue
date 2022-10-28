@@ -19,7 +19,7 @@
     </el-col>
     <el-col :span="20">
       <h1 id="title">{{ title }}</h1>
-      <el-row>
+      <el-row v-if="isDisplayEditButton">
         <el-col :span="2" style="float: right">
           <delete :articleId="articleId" :title="title"></delete>
         </el-col>
@@ -72,7 +72,7 @@ export default {
       title: '',
       content: '',
       nodeData: [],
-      isHighlightCurrent: false,
+      isHighlightCurrent: true,
       isCheckOnClickNode: true,
       createNewArticleId: localStorage.getItem('createNewArticleId') ? localStorage.getItem('createNewArticleId') : 0,
       articleIdStack: localStorage.getItem('articleIdStack') ? JSON.parse(localStorage.getItem('articleIdStack')) : [],
