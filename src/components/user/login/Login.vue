@@ -7,7 +7,7 @@
     <div class="input_box">
       <input type="password" placeholder="请输入密码" v-model="password">
     </div>
-    <button @click="login">登录</button>
+    <el-button @click="login" :disabled="disabled">登录</el-button>
     <br>
   </div>
 </template>
@@ -18,7 +18,8 @@ export default {
   data() {
     return {
       phone: '',
-      password: ''
+      password: '',
+      disabled: false
     }
   },
   mounted() {
@@ -26,6 +27,11 @@ export default {
   },
   methods: {
     login: function () {
+      const reg = /^1[3456789]\d{9}$/
+      if (!reg.test(this.phone)) {
+        this.$message.error('请输入正确的手机号')
+        return
+      }
       this.axios
         .post('/user/doLogin', {
           'phone': this.phone,
@@ -101,11 +107,12 @@ input {
 button {
   margin-top: 50px;
   width: 60%;
-  height: 30px;
+  height: 50px;
   border-radius: 10px;
   border: 0;
   color: #fff;
   text-align: center;
+  text-align-all: center;
   line-height: 30px;
   font-size: 15px;
   background-image: linear-gradient(to right, #30cfd0, #330867);
