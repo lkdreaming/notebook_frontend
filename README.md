@@ -5,6 +5,10 @@
 ## Build Setup
 
 ``` bash
+
+# install webpack-hot-middleware
+npm install webpack-hot-middleware
+
 # install dependencies
 npm install
 
