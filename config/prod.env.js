@@ -1,6 +1,6 @@
 'use strict'
 module.exports = {
   NODE_ENV: '"production"',
-  BASE_API: '"http://localhost:8186"',
-  FIGURE_BED_URL: 'http://192.168.30.100:9000'
+  BASE_API: '"https://notebook.lkzflzylzx.top/api"',
+  FIGURE_BED_URL: '"https://notebook.lkzflzylzx.top"'
 }
