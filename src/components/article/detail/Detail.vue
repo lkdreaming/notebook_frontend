@@ -19,7 +19,7 @@
     </el-col>
     <el-col :span="20">
       <h1 id="title">{{ title }}</h1>
-      <el-row v-if="isDisplayEditButton">
+      <el-row>
         <el-col :span="2" style="float: right">
           <delete :articleId="articleId" :title="title"></delete>
         </el-col>
@@ -29,7 +29,7 @@
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item :command="parentId">在本文章的同级目录创建文章</el-dropdown-item>
-              <el-dropdown-item :command="articleId">创建本文章的子文章</el-dropdown-item>
+              <el-dropdown-item :command="articleId" v-if="isDisplayEditButton">创建本文章的子文章</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>
