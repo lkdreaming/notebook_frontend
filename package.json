@@ -13,6 +13,7 @@
     "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
     "build": "node build/build.js",
     "build:prd": "node build/build.js",
+    "build:test": "node build/test.js",
     "build:dev": "node build/dev.js"
   },
   "dependencies": {
