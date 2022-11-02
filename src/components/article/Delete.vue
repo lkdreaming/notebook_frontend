@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <el-popconfirm :title="msg" icon-color="red" @confirm="handleDel">
-      <el-button slot="reference">删除</el-button>
+      <el-button slot="reference" :disabled="disabled">删除</el-button>
     </el-popconfirm>
   </div>
 </template>
@@ -11,7 +11,8 @@ export default {
   name: 'Delete',
   props: {
     articleId: Number,
-    title: String
+    title: String,
+    disabled: Boolean
   },
   data() {
     return {

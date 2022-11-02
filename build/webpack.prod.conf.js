@@ -146,12 +146,12 @@ if (config.build.bundleAnalyzerReport) {
   webpackConfig.plugins.push(new BundleAnalyzerPlugin())
 }
 
-module.exports = webpackConfig
+// module.exports = {
+//   resolve: {
+//     alias: {
+//       jquery: "jquery/src/jquery",
+//     }
+//   }
+// }
 
-module.exports = {
-  resolve: {
-    alias: {
-      jquery: "jquery/src/jquery",
-    }
-  }
-}
+module.exports = webpackConfig
