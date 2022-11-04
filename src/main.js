@@ -85,12 +85,12 @@ const isTokenExpired = () => { // 验证当前token是否过期
 let isRefreshing = false
 
 axios.interceptors.request.use(
-  async config => {
+  config => {
     if (isTokenExpired()) { // 如果过期了, 则需要用RefreshedToken换新的token
       if (!isRefreshing) {
         isRefreshing = true
         let refreshToken = localStorage.getItem('RefreshedToken')
-        await axios
+        axios
           .post('/user/getNewToken',
             {
               'RefreshedToken': refreshToken
@@ -102,6 +102,7 @@ axios.interceptors.request.use(
               localStorage.setItem('token', response.data.data.Authorization)
               localStorage.setItem('tokenExpireTimeStamp', response.data.data.tokenExpireTimeStamp)
               localStorage.setItem('RefreshedToken', response.data.data.RefreshedToken)
+              axios.defaults.headers.common['Authorization'] = response.data.data.Authorization
             } else {
               alert(response.data.errorMessage)
               this.$router.push('/login')
