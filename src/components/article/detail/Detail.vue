@@ -74,11 +74,11 @@ export default {
       nodeData: [],
       isHighlightCurrent: true,
       isCheckOnClickNode: true,
-      createNewArticleId: localStorage.getItem('createNewArticleId') ? localStorage.getItem('createNewArticleId') : 0,
-      articleIdStack: localStorage.getItem('articleIdStack') ? JSON.parse(localStorage.getItem('articleIdStack')) : [],
-      parentArticleIdStack: localStorage.getItem('parentArticleIdStack') ? JSON.parse(localStorage.getItem('parentArticleIdStack')) : [],
+      createNewArticleId: sessionStorage.getItem('createNewArticleId') ? sessionStorage.getItem('createNewArticleId') : 0,
+      articleIdStack: sessionStorage.getItem('articleIdStack') ? JSON.parse(sessionStorage.getItem('articleIdStack')) : [],
+      parentArticleIdStack: sessionStorage.getItem('parentArticleIdStack') ? JSON.parse(sessionStorage.getItem('parentArticleIdStack')) : [],
       // articleId: this.articleIdStack ? this.articleIdStack[this.articleIdStack.length - 1] : 0,
-      articleId: localStorage.getItem('articleId') ? localStorage.getItem('articleId') : 1,
+      articleId: sessionStorage.getItem('articleId') ? sessionStorage.getItem('articleId') : 1,
       articleList: '',
       // parentId: this.$route.params.parentId ? this.$route.params.parentId : localStorage.getItem('parentId') ? localStorage.getItem('parentId') : 0,
       // parentId: this.parentArticleIdStack ? this.parentArticleIdStack[this.parentArticleIdStack.length - 1] : 0,
@@ -133,11 +133,11 @@ export default {
   methods: {
     updateParentId(parentId) {
       this.parentId = parentId
-      localStorage.setItem('parentId', this.parentId)
+      sessionStorage.setItem('parentId', this.parentId)
     },
     updateArticleId(articleId) {
       this.articleId = articleId
-      localStorage.setItem('articleId', this.articleId)
+      sessionStorage.setItem('articleId', this.articleId)
       if (parseInt(this.articleId) === 1) {
         this.editable = true
         this.subfield = true
@@ -150,28 +150,28 @@ export default {
     },
     addArticleIdStack(articleId) {
       this.articleIdStack.push(articleId)
-      localStorage.setItem('articleIdStack', JSON.stringify(this.articleIdStack))
+      sessionStorage.setItem('articleIdStack', JSON.stringify(this.articleIdStack))
       this.articleId = this.articleIdStack[this.articleIdStack.length - 1]
-      localStorage.setItem('articleId', this.articleId)
+      sessionStorage.setItem('articleId', this.articleId)
     },
     updateArticleIdStack(articleId) {
       if (this.articleIdStack) {
         this.articleIdStack.pop()
       }
       this.articleIdStack.push(articleId)
-      localStorage.setItem('articleIdStack', JSON.stringify(this.articleIdStack))
+      sessionStorage.setItem('articleIdStack', JSON.stringify(this.articleIdStack))
       this.articleId = this.articleIdStack[this.articleIdStack.length - 1]
-      localStorage.setItem('articleId', this.articleId)
+      sessionStorage.setItem('articleId', this.articleId)
     },
     updateCreateNewArticleId(articleId) {
       this.createNewArticleId = articleId
-      localStorage.setItem('createNewArticleId', articleId)
+      sessionStorage.setItem('createNewArticleId', articleId)
     },
     delArticleIdStack() {
       this.articleIdStack.pop()
-      localStorage.setItem('articleIdStack', JSON.stringify(this.articleIdStack))
+      sessionStorage.setItem('articleIdStack', JSON.stringify(this.articleIdStack))
       this.articleId = this.articleIdStack[this.articleIdStack.length - 1]
-      localStorage.setItem('articleId', this.articleId)
+      sessionStorage.setItem('articleId', this.articleId)
     },
     addUrl() {
       this.$nextTick(function () {
@@ -263,7 +263,7 @@ export default {
             this.articleList = response.data.data
             if (!this.articleId && this.articleList) {
               this.articleId = this.articleIdStack.length !== 0 ? this.articleIdStack[this.articleIdStack.length - 1] : this.articleList[0].id
-              localStorage.setItem('articleId', JSON.stringify(this.articleId))
+              sessionStorage.setItem('articleId', JSON.stringify(this.articleId))
             }
             return this.articleList
           })

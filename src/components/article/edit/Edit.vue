@@ -24,9 +24,9 @@ export default {
   },
   methods: {
     getDetail() {
-      console.log(localStorage.getItem('articleId'))
+      console.log(sessionStorage.getItem('articleId'))
       // eslint-disable-next-line no-useless-escape
-      let id = this.$route.params.id ? this.$route.params.id : localStorage.getItem('articleId').replaceAll('\"', '')
+      let id = this.$route.params.id ? this.$route.params.id : sessionStorage.getItem('articleId').replaceAll('\"', '')
       console.log('getDetail id: ' + id)
       this.axios
         .get('/article/detail', {
@@ -37,9 +37,9 @@ export default {
         .then(response => {
           this.content = response.data.data.content
           this.title = response.data.data.title
-          this.id = this.$route.params.id ? this.$route.params.id : localStorage.getItem('articleId')
-          this.parentId = this.$route.params.parentId ? this.$route.params.parentId : localStorage.getItem('parentId')
-          localStorage.setItem('parentId', this.parentId)
+          this.id = this.$route.params.id ? this.$route.params.id : sessionStorage.getItem('articleId')
+          this.parentId = this.$route.params.parentId ? this.$route.params.parentId : sessionStorage.getItem('parentId')
+          sessionStorage.setItem('parentId', this.parentId)
         })
         .catch(function (error) { // 请求失败处理
           console.log(error)
