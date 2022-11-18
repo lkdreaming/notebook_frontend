@@ -43,7 +43,7 @@ export default {
   },
   data: function () {
     return {
-      codeStyle: 'agate',
+      codeStyle: '',
       uploadVideoCode: this.uploadVideoCode,
       uploadFileCode: this.uploadFileCode,
       xssOptions: this.xssOptions,
@@ -86,6 +86,10 @@ export default {
   },
   getArticleId() {
     return this.$refs.md.id
+  },
+  mounted() {
+    let that = this
+    that.codeStyle = 'agate'
   },
   methods: {
     // 这是我们自定义的按钮触发的方法，这里也可以在自定义其他功能时做一些其他操作。

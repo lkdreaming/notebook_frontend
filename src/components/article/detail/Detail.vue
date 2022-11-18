@@ -40,7 +40,7 @@
                     :subfield="subfield"
                     :defaultOpen="'preview'"
                     :editable="editable"
-                    :codeStyle="'agate'"
+                    :codeStyle="codeStyle"
                     @navigationToggle="addUrl"
                     :fontSize="'18px'"
                     :xssOptions="xssOptions"
@@ -70,6 +70,7 @@ export default {
   components: 'Back',
   data() {
     return {
+      codeStyle: '',
       title: '',
       content: '',
       nodeData: [],
@@ -344,6 +345,8 @@ export default {
           console.log(error)
         })
     })
+    let that = this
+    that.codeStyle = 'agate'
   }
 }
 </script>
