@@ -17,11 +17,13 @@ import MavonEditor from 'mavon-editor'
 import 'mavon-editor/dist/css/index.css'
 import Editor from './components/mavonEditor/Editor'
 import markdownItMermaid from '@liradb2000/markdown-it-mermaid'
+import markdownItContainer from '@hackmd/markdown-it-container'
 
 Vue.use(MavonEditor)
 
 // MavonEditor.mavonEditor.getMarkdownIt().use(markdownItMermaid)  // v2.10.4 调用markdownIt的方式
 MavonEditor.markdownIt.use(markdownItMermaid)
+MavonEditor.markdownIt.use(markdownItContainer)
 
 // v-md-editor的引入
 // import VueMarkdownEditor from '@kangc/v-md-editor'

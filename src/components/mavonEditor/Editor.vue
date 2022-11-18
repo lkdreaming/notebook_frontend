@@ -11,6 +11,7 @@
                   @imgAdd="imgAdd"
                   ref="md"
                   :xssOptions="xssOptions"
+                  :externalLink="externalLink"
     >
       <template v-slot:left-toolbar-after>
         <button
@@ -48,6 +49,38 @@ export default {
       xssOptions: this.xssOptions,
       rules: {
         name: [{required: true, message: '请输入标题'}]
+      },
+      externalLink: {
+        markdown_css: function () {
+          // 这是你的markdown css文件路径
+          // return '/mavon-editor/markdown/github-markdown.min.css';
+          return 'https://minio.lkzflzylzx.top/html/mavon-editor/dist/markdown/github-markdown.min.css'
+        },
+        hljs_js: function () {
+          // 这是你的hljs文件路径
+          // return '/mavon-editor/highlightjs/highlight.min.js';
+          return 'https://minio.lkzflzylzx.top/html/mavon-editor/dist/highlightjs/highlight.min.js'
+        },
+        hljs_css: function (css) {
+          // 这是你的代码高亮配色文件路径
+          // return '/mavon-editor/highlightjs/styles/' + css + '.min.css';
+          return 'https://minio.lkzflzylzx.top/html/mavon-editor/dist/highlightjs/styles/' + css + '.min.css'
+        },
+        hljs_lang: function (lang) {
+          // 这是你的代码高亮语言解析路径
+          // return '/mavon-editor/highlightjs/languages/' + lang + '.min.js';
+          return 'https://minio.lkzflzylzx.top/html/mavon-editor/dist/highlightjs/languages/' + lang + '.min.js'
+        },
+        katex_css: function () {
+          // 这是你的katex配色方案路径路径
+          // return '/mavon-editor/katex/katex.min.css';
+          return 'https://minio.lkzflzylzx.top/html/mavon-editor/dist/katex/katex.min.css'
+        },
+        katex_js: function () {
+          // 这是你的katex.js路径
+          // return '/mavon-editor/katex/katex.min.js';
+          return 'https://minio.lkzflzylzx.top/html/mavon-editor/dist/katex/katex.min.js'
+        }
       }
     }
   },
