@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-// import HelloWorld from '@/components/HelloWorld'
+import HelloWorld from '@/components/HelloWorld'
 import Create from '@/components/article/create/Create'
 import Edit from '@/components/article/edit/Edit'
 import Detail from '@/components/article/detail/Detail'
@@ -23,6 +23,11 @@ export default new Router({
       // name: 'HelloWorld',
       // component: HelloWorld
       redirect: '/login'
+    },
+    {
+      path: '/HelloWorld',
+      name: 'HelloWorld',
+      component: HelloWorld
     },
     {
       path: '/create',
