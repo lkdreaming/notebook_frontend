@@ -15,7 +15,7 @@ export default {
   }
 }
 </script>
-
+<!-- 提交到github -->
 <style scoped>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
