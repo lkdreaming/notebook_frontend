@@ -41,8 +41,6 @@ MavonEditor.markdownIt.use(markdownItContainer)
 
 Vue.use(ElementUI)
 
-Vue.use(Vuex)
-
 Vue.config.silent = true
 
 Vue.component('back', {
@@ -107,6 +105,10 @@ axios.interceptors.request.use(
               axios.defaults.headers.common['Authorization'] = response.data.data.Authorization
             } else {
               alert(response.data.errorMessage)
+              localStorage.removeItem('token')
+              localStorage.removeItem('tokenExpireTimeStamp')
+              localStorage.removeItem('RefreshedToken')
+              delete axios.defaults.headers.common['Authorization']
               this.$router.push('/login')
             }
           }).catch(() => {
@@ -147,7 +149,7 @@ var vm = new Vue({
   router,
   render: h => h(App),
   components: {App},
-  template: '<App/>'
+  template: '<App/>',
 })
 
 export default vm

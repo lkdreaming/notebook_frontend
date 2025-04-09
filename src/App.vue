@@ -10,6 +10,7 @@ import Head from '@/components/head/backgroud/bootstrap/Head'
 
 export default {
   name: 'App',
+  
   components: {
     Head
   }
